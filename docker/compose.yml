@@ -1,6 +1,6 @@
 services:
   ygege:
-    image: uwucode/ygege:latest
+    image: ghcr.io/obijc/ygege:latest
     container_name: ygege
     restart: unless-stopped
     # Optional: Run with specific user ID (already runs as non-root UID 10001 by default)

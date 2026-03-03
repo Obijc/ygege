@@ -31,18 +31,15 @@ Indexeur haute performance pour YGG Torrent écrit en Rust
 
 ---
 
-## Installation rapide (Docker)
+### 1. Utiliser l'image Docker (GHCR)
 
-> [!IMPORTANT]
-> Pour la compilation de l'image Docker et l'utilisation complète, consultez le **[Guide Docker complet](docs/build-docker-linux.md)**.
-
-### 1. Cloner le projet et construire l'image
+L'image officielle est disponible sur le GitHub Container Registry :
 
 ```bash
-git clone <url-du-repo>
-cd ygege
-docker build -t ygege-local:latest -f docker/Dockerfile .
+docker pull ghcr.io/obijc/ygege:latest
 ```
+
+*Note : Pour compiler l'image vous-même, consultez le **[Guide Docker complet](docs/build-docker-linux.md)**.*
 
 ### 2. Configurer et lancer
 
@@ -51,7 +48,7 @@ docker build -t ygege-local:latest -f docker/Dockerfile .
 ```yaml
 services:
   ygege:
-    image: ygege-local:latest    # ou uwucode/ygege:latest pour l'image officielle
+    image: ghcr.io/obijc/ygege:latest
     environment:
       YGG_USERNAME: "votre_username"
       YGG_PASSWORD: "votre_password"
