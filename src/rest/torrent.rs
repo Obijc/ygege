@@ -231,7 +231,31 @@ async fn download_torrent_binary(
         }
     }
 
-    Err("Torrent download failed: CF blocked the raw HTTP client".into())
+    // FlareSolverr fallback: use request.get through a real browser
+    warn!("wreq download failed, trying FlareSolverr GET fallback for {}", url);
+    if !FlareSolverrClient::is_available() {
+        return Err("Torrent download failed and FlareSolverr not configured".into());
+    }
+
+    let solution = FlareSolverrClient::fetch_page_with_solution(url).await?;
+    let body = &solution.response;
+
+    // Try base64 decode first (binary responses may be encoded)
+    use base64::{Engine as _, engine::general_purpose};
+    if let Ok(bytes) = general_purpose::STANDARD.decode(body) {
+        if !bytes.is_empty() {
+            info!("FlareSolverr: decoded torrent binary from base64 ({} bytes)", bytes.len());
+            return Ok(bytes);
+        }
+    }
+
+    // Otherwise treat the response as raw bytes
+    let bytes = body.as_bytes().to_vec();
+    if bytes.is_empty() {
+        return Err("FlareSolverr returned empty response for torrent download".into());
+    }
+    info!("FlareSolverr: using raw response as torrent binary ({} bytes)", bytes.len());
+    Ok(bytes)
 }
 
 /// Extract token from JSON response (handles both plain JSON and HTML-wrapped JSON from FlareSolverr)
